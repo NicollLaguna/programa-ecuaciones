@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Verificación y Factor Integrante</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="shortcut icon" href="../static/icon.png" type="image/x-icon">
+
+    <style>
+        html {
+            min-height: 100%;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("/static/fondo.jpg");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+
+        .container {
+            max-width: 700px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+
+        }
+
+        input[type="text"] {
+            font-size: 16px;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        input[type="submit"] {
+            padding: 12px;
+            font-size: 16px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #218838;
+        }
+
+        .resultado {
+            background-color: #e3f2fd;
+            color: #0d47a1;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 25px;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="container">
+        <h2>Verificar Ecuación Exacta y Encontrar Factor Integrante</h2>
+        <form method="POST">
+            <label for="M">Ingrese \( M(x,y) \):</label><br />
+            <input type="text" name="M" value="{{ M_valor }}" required /><br />
+            <label for="N">Ingrese \( N(x,y) \):</label><br />
+            <input type="text" name="N" value="{{ N_valor }}" required /><br />
+            <input type="submit" value="Analizar" />
+        </form>
+
+        {% if resultado %}
+        <div class="resultado">
+            {% if resultado.error %}
+            <p style="color:red;">{{ resultado.error }}</p>
+            {% else %}
+            <p><strong>Ecuación diferencial original:</strong></p>
+            <p>\( M(x,y) = {{ resultado.M }} \)</p>
+            <p>\( N(x,y) = {{ resultado.N }} \)</p>
+
+            <p><strong>Derivadas parciales iniciales:</strong></p>
+            <p>\( \frac{\partial M}{\partial y} = {{ resultado.dM_dy }} \)</p>
+            <p>\( \frac{\partial N}{\partial x} = {{ resultado.dN_dx }} \)</p>
+
+            <p><strong>¿Es exacta inicialmente?:</strong> {{ resultado.exacta_inicial }}</p>
+            <p><em>{{ resultado.mensaje_inicial }}</em></p>
+
+            {% if resultado.factor %}
+            <hr />
+            <p><strong>Factor integrante encontrado ({{ resultado.tipo_factor }}):</strong> \( \mu = {{ resultado.factor
+                }}
+                \)</p>
+            <p><strong>Multiplicamos la ecuación por el factor integrante:</strong></p>
+            <p>\( M_{nuevo} = {{ resultado.M_nuevo }} \)</p>
+            <p>\( N_{nuevo} = {{ resultado.N_nuevo }} \)</p>
+
+            <p><strong>Derivadas parciales después del factor:</strong></p>
+            <p>\( \frac{\partial M_{nuevo}}{\partial y} = {{ resultado.dM_dy2 }} \)</p>
+            <p>\( \frac{\partial N_{nuevo}}{\partial x} = {{ resultado.dN_dx2 }} \)</p>
+
+            <p><strong>¿Es exacta ahora?:</strong> {{ resultado.exacta_final }}</p>
+            <p><em>{{ resultado.mensaje_final }}</em></p>
+            {% elif resultado.mensaje_final %}
+            <p><em>{{ resultado.mensaje_final }}</em></p>
+            {% endif %}
+
+            {% if resultado.solucion %}
+            <hr />
+            <p><strong>Solución implícita:</strong></p>
+            <p>\( {{ resultado.solucion }} \)</p>
+            {% endif %}
+            {% endif %}
+        </div>
+        {% endif %}
+
+    </div>
+</body>
+
+</html>
